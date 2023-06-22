@@ -118,6 +118,7 @@ Within the third capturing group `([a-z\.]{2,6})`, it matches a dot character in
 These character escapes allow you to match specific characters as literal characters within the regular expression, overriding their special meanings. They are denoted by a backslash `(\)` followed by the character that needs to be escaped.
 
 ### Example
+Examples of valid email addresses
 1. john.doe@example.com
 2. mary.saunders_123@example.com
 
