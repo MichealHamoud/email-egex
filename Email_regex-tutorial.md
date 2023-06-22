@@ -18,6 +18,7 @@ This regular expression matches an email address consisting of a username that c
 - [The OR Operator](#the-or-operator)
 - [Flags](#flags)
 - [Character Escapes](#character-escapes)
+- [Example](#example)
 
 ## Regex Components
 `/^([a-z0-9_\.-]+)@([\da-z\.-]+)\.([a-z\.]{2,6})$/`
@@ -115,6 +116,19 @@ Within the third capturing group `([a-z\.]{2,6})`, it matches a dot character in
 `\d` - This character escape represents a digit character from 0 to 9. It is used within the second capturing group `([\da-z\.-]+)` to match a digit character in the domain name portion of the email address.
 
 These character escapes allow you to match specific characters as literal characters within the regular expression, overriding their special meanings. They are denoted by a backslash `(\)` followed by the character that needs to be escaped.
+
+### Example
+Examples of valid email address as per Regex pattern
+
+john.doe@example.com
+mary.saunders_123@example.com
+Examples of invalid email addresses
+
+John.doe@example.com (as Username cannot have an uppercase alphabet)
+john*doe@example.con (as Username cannot have a non-alphanumeric character other than underscore, dash and dot )
+john.doe@example_123.co (as Domain name cannot have an underscore)
+john.doe@example.c (as Domain extension should have min 2 alphabets)
+john.doe@example.com123 (as Domain extension cannot have non alphabet)
 
 ## Author
  
