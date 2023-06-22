@@ -12,12 +12,15 @@ This regular expression matches an email address consisting of a username that c
 
 - [Anchors](#anchors)
 - [Quantifiers](#quantifiers)
-- [Grouping Constructs](#grouping-constructs)
-- [Bracket Expressions](#bracket-expressions)
+- [OR Operator](#or-operator)
 - [Character Classes](#character-classes)
-- [The OR Operator](#the-or-operator)
 - [Flags](#flags)
-- [Character Escapes](#character-escapes)
+- [Grouping and Capturing](#grouping-and-capturing)
+- [Bracket Expressions](#bracket-expressions)
+- [Greedy and Lazy Match](#greedy-and-lazy-match)
+- [Boundaries](#boundaries)
+- [Back-references](#back-references)
+- [Look-ahead and Look-behind](#look-ahead-and-look-behind)
 - [Example](#example)
 
 ## Regex Components
@@ -103,19 +106,73 @@ In the regular expression `/^([a-z0-9_\.-]+)@([\da-z\.-]+)\.([a-z\.]{2,6})$/`, t
 
 In the provided regex `/^([a-z0-9_\.-]+)@([\da-z\.-]+)\.([a-z\.]{2,6})$/`, there are no flags specified. The regex pattern is using the default behavior of the regex engine without any additional modifications.
 
-### Character Escapes
+### Grouping and Capturing
 
-`\.` - This character escape represents a literal dot character `(.)`. It is used in two places:
+`([a-z0-9_\.-]+)` - This is the first capturing group. It captures the username portion of the email address. It matches one or more occurrences of lowercase letters, digits, underscores, dots, or hyphens.
 
-Within the second capturing group `([\da-z\.-]+)`, it matches a dot character in the domain name portion of the email address.
-Within the third capturing group `([a-z\.]{2,6})`, it matches a dot character in the top-level domain (TLD) portion of the email address.
-`\-` - This character escape represents a literal hyphen character `(-)`. It is used within the first capturing group `([a-z0-9_\.-]+)` to match a hyphen character in the username portion of the email address.
+`([\da-z\.-]+)` - This is the second capturing group. It captures the domain name portion of the email address. It matches one or more occurrences of digits, lowercase letters, dots, or hyphens.
 
-`\_` - This character escape represents a literal underscore character `(_)`. It is used within the first capturing group `([a-z0-9_\.-]+)` to match an underscore character in the username portion of the email address.
+`([a-z\.]{2,6})` - This is the third capturing group. It captures the top-level domain (TLD) portion of the email address. It matches lowercase letters or dots and requires the length of the matched string to be between 2 and 6 characters.
 
-`\d` - This character escape represents a digit character from 0 to 9. It is used within the second capturing group `([\da-z\.-]+)` to match a digit character in the domain name portion of the email address.
+The capturing groups are enclosed in parentheses and allow you to capture and extract specific portions of the matched text. When a match is found, the captured content within the groups can be accessed separately. The order of capturing groups corresponds to the order of their appearance in the regex pattern.
 
-These character escapes allow you to match specific characters as literal characters within the regular expression, overriding their special meanings. They are denoted by a backslash `(\)` followed by the character that needs to be escaped.
+For example, when applying the regex to the string "john.doe@example.com," the first capturing group captures "john.doe," the second capturing group captures "example," and the third capturing group captures "com."
+
+### Greedy and Lazy Match
+
+Greedy Matching: By default, quantifiers are greedy, meaning they match as much text as possible while still allowing the overall pattern to match. The quantifiers `+` (one or more) and `*` (zero or more) are greedy by default. For example:
+
+`.*` (dot-star) matches any sequence of characters, including the maximum possible number of characters.
+Lazy (Non-greedy) Matching: In contrast, lazy or non-greedy matching matches as little text as possible while still allowing the overall pattern to match. The `?` quantifier makes the preceding pattern lazy. For example:
+
+`.*?` matches any sequence of characters, but it stops at the first possible match of the subsequent pattern.
+Lazy matching is useful when you want to match the shortest possible string that satisfies the pattern. It is commonly used when there is a need to match text within a specific context or when you want to minimize the amount of text captured.
+
+In the provided regular expression `/^([a-z0-9_\.-]+)@([\da-z\.-]+)\.([a-z\.]{2,6})$/`, there are no explicit use of lazy matching. The quantifiers `+` and `{2,6}` are greedy by default. However, it's worth noting that the use of lazy quantifiers may vary depending on the specific requirements of your regex pattern and the regular expression engine you are using.
+
+### Boundaries
+
+In regular expressions, boundaries are used to define specific positions within the input text. They allow you to match patterns that occur at certain positions relative to other characters or boundaries. The most commonly used boundaries are:
+
+`^ `(caret) - The caret represents the start of a line or string. When placed at the beginning of a regular expression pattern, it matches the position at the start of the input text.
+
+`$` (dollar sign) - The dollar sign represents the end of a line or string. When placed at the end of a regular expression pattern, it matches the position at the end of the input text.
+
+These boundaries help you define patterns that need to match at the beginning or end of a line or string. For example:
+
+`/^Hello/` matches "Hello" only if it appears at the start of a line or string.
+`/world$/` matches "world" only if it appears at the end of a line or string.
+In the provided regular expression `/^([a-z0-9_\.-]+)@([\da-z\.-]+)\.([a-z\.]{2,6})$/`, the `^` and `$` symbols are used as boundaries. They indicate that the entire email address should match from the start `(^)` to the end `($)` of the line or string. This ensures that the regular expression pattern matches the entire email address and doesn't allow any additional characters before or after it.
+
+### Back-references
+
+In regular expressions, back-references are used to refer back to previously matched groups within the pattern. They allow you to match the same text that was previously captured by a capturing group and use it later in the pattern. Back-references are typically indicated by `\` followed by a digit.
+
+Here's an example to illustrate the use of back-references:
+
+Consider the regular expression pattern `(\w)\1`. In this pattern, `(\w)` is a capturing group that matches a single word character. The `\1` is a back-reference that matches the same text that was captured by the first capturing group.
+
+So, if the input text is "hello," the pattern will match the repeating "ll" because the first capturing group captured the letter "l" and the back-reference `\1` matches the same "l" again.
+
+Back-references are useful when you want to ensure that the same text is repeated or when you need to check for repeated sequences within the input text.
+
+In the provided regular expression `/^([a-z0-9_\.-]+)@([\da-z\.-]+)\.([a-z\.]{2,6})$/`, there are no explicit back-references used. The capturing groups in the pattern capture specific portions of the email address, but they are not referred to later in the pattern using back-references.
+
+### Look-ahead and Look-behind
+
+Look-ahead and look-behind are zero-width assertions in regular expressions that allow you to specify conditions that must be met ahead or behind the current position in the input text without including them in the actual match. They are used to enforce certain conditions without consuming the characters that match the condition.
+
+Positive Look-ahead `((?=...)):` Positive look-ahead asserts that the pattern inside the lookahead must be matched at the current position in the input text, without including it in the overall match. It ensures that the pattern is followed by the specified condition. For example, `/foo(?=bar)/` matches "foo" only if it is immediately followed by "bar."
+
+Negative Look-ahead `((?!...)):` Negative look-ahead asserts that the pattern inside the lookahead must not be matched at the current position in the input text. It ensures that the pattern is not followed by the specified condition. For example, `/foo(?!bar)/` matches "foo" only if it is not immediately followed by "bar."
+
+Positive Look-behind `((?<=...)):` Positive look-behind asserts that the pattern inside the lookbehind must be matched immediately before the current position in the input text, without including it in the overall match. It ensures that the pattern is preceded by the specified condition. However, it is important to note that lookbehinds have certain limitations in terms of their length and form in different regex engines.
+
+Negative Look-behind `((?<!...)):` Negative look-behind asserts that the pattern inside the lookbehind must not be matched immediately before the current position in the input text. It ensures that the pattern is not preceded by the specified condition.
+
+Look-ahead and look-behind assertions are powerful tools for adding conditions to your regular expressions without actually including them in the matched text. They are useful for enforcing certain patterns in specific contexts.
+
+In the provided regular expression `/^([a-z0-9_\.-]+)@([\da-z\.-]+)\.([a-z\.]{2,6})$/`, there are no explicit look-ahead or look-behind assertions used. The pattern focuses on capturing specific parts of the email address and does not rely on conditions ahead or behind the captured text.
 
 ### Example
 Examples of valid email addresses
